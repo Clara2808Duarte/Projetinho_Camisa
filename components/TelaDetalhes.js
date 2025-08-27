@@ -1,20 +1,31 @@
 // Importa hooks e componentes básicos do React Native
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import {
-  View, 
-  Text, 
-  Image, 
-  ScrollView, 
-  StyleSheet, 
-  TextInput, 
+  View,
+  Text,
+  Image,
+  ScrollView,
+  StyleSheet,
+  TextInput,
   TouchableOpacity,
   Alert,
-  KeyboardAvoidingView, 
-  Platform, 
+  KeyboardAvoidingView,
+  Platform,
 } from 'react-native';
+
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 // Componente principal da tela de detalhes
 export default function TelaDetalhes({ route }) {
+  const [apelido, setApelido] = useState('');
+
+  useEffect(() => {
+    const carregarUsuario = async () => {
+      const salvo = await AsyncStorage.getItem('usuarioLogado');
+      if (salvo) setApelido(salvo);
+    };
+    carregarUsuario();
+  }, []);
   // Recebe o produto enviado via navegação
   const { produto } = route.params;
 
@@ -114,6 +125,7 @@ export default function TelaDetalhes({ route }) {
         keyboardShouldPersistTaps="handled" // Permite clicar fora sem fechar teclado
         style={estilos.container} // Aplica estilo container
       >
+        <Text style={estilos.saudacao}>Bem-vindo, {apelido}!</Text>
         {/* Imagem do produto */}
         <Image source={produto.imagem} style={estilos.imagem} />
         <Text style={estilos.nome}>{produto.nome}</Text> {/* Nome do produto */}
@@ -212,6 +224,12 @@ const estilos = StyleSheet.create({
     resizeMode: 'contain', // Mantém proporção da imagem
     borderRadius: 10,
     marginBottom: 20,
+  },
+  saudacao: {
+    fontSize: 18,
+    fontWeight: '600',
+    marginBottom: 10,
+    color: '#800000',
   },
   nome: { fontSize: 24, fontWeight: '700', color: '#800020', marginBottom: 6 }, // Nome do produto
   preco: { fontSize: 20, fontWeight: '600', color: '#333', marginBottom: 10 }, // Preço

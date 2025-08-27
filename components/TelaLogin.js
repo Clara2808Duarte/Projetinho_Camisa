@@ -1,55 +1,76 @@
 import { useState } from 'react'; 
 import {
-  View, // Agrupar outros componentes
-  Text, // Exibie texto
-  TextInput, // Receber entrada de texto do usuário
-  TouchableOpacity, // Criar botões 
-  Alert, // API para exibir alertas no app
+  View, 
+  Text, 
+  TextInput, 
+  TouchableOpacity, 
+  Alert, 
   StyleSheet, 
-  KeyboardAvoidingView, // Componente que ajusta a tela quando o teclado aparece
-  Platform, // API para detectar sistema operacional (iOS ou Android)
+  KeyboardAvoidingView, 
+  Platform, 
 } from 'react-native'; 
 
-export default function TelaLogin({ navigation }) { 
-  const [usuario, setUsuario] = useState(''); // Estado para armazenar o valor digitado no campo usuário
-  const [senha, setSenha] = useState(''); // Estado para armazenar o valor digitado no campo senha
-  const [erroUsuario, setErroUsuario] = useState(''); // Estado para armazenar mensagem de erro do usuário
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
-  const validarLogin = () => { // ao clicar no botão "Entrar"
-    if (!usuario.trim()) { // Verifica se o usuário não digitou nada (trim remove espaços)
-      setErroUsuario('O usuário é obrigatório.'); // mensagem de erro para usuário vazio
+export default function TelaLogin({ navigation }) { 
+  const [usuario, setUsuario] = useState('');
+  const [apelido, setApelido] = useState('');
+  const [senha, setSenha] = useState('');
+  const [erroUsuario, setErroUsuario] = useState('');
+
+  const validarLogin = async () => { 
+    if (!usuario.trim()) {
+      setErroUsuario('O usuário é obrigatório.');
       return; 
     } else {
-      setErroUsuario(''); // Limpa a mensagem de erro se o usuário estiver preenchido
+      setErroUsuario('');
     }
 
-    // Verificação de login fixo
-    if (usuario === 'aluno' && senha === '123') { // Verifica se usuário e senha estão corretos
-      Alert.alert('Sucesso!', 'Login realizado com sucesso.'); // Mostra alerta de sucesso
-      navigation.navigate('Catalogo'); // Navega para a tela "Catalogo"
+    if (usuario === 'aluno' && senha === '123') {
+      try {
+        await AsyncStorage.setItem('usuarioLogado', apelido); 
+        Alert.alert('Sucesso!', 'Login realizado com sucesso.');
+        navigation.navigate('Catalogo');
+      } catch (e) {
+        console.error('Erro ao salvar usuário:', e);
+      }
     } else {
-      Alert.alert(':( Erro', 'Usuário ou senha incorretos.'); // Mostra alerta caso usuário ou senha estejam errados
+      Alert.alert(':( Erro', 'Usuário ou senha incorretos.');
     }
   };
 
-  return ( // Retorna os elementos que serão renderizados na tela
+  return (
     <KeyboardAvoidingView
       style={estilos.container} 
-      behavior={Platform.OS === 'ios' ? 'padding' : undefined} // Ajusta o comportamento do teclado no iOS
+      behavior={Platform.OS === 'ios' ? 'padding' : undefined}
     >
       <View style={estilos.card}> 
-        <Text style={estilos.titulo}> Time de Craques</Text> {/* Título da tela */}
+        <Text style={estilos.titulo}>Time de Craques</Text>
 
         <View style={estilos.bloco}> 
-          <Text style={estilos.rotulo}>Usuário</Text> {/* Rótulo do campo */}
+          <Text style={estilos.rotulo}>Usuário</Text>
           <TextInput
             placeholder="Digite seu usuário" 
             value={usuario}
-            onChangeText={setUsuario} // Atualiza estado ao digitar
-            style={[estilos.input, erroUsuario ? estilos.inputErro : null]} // Aplica estilo e altera borda se houver erro
+            onChangeText={setUsuario}
+            style={[estilos.input, erroUsuario ? estilos.inputErro : null]}
             placeholderTextColor="#aaa" 
           />
-          {erroUsuario ? ( 
+          {erroUsuario ? (
+            <Text style={estilos.textoErro}>{erroUsuario}</Text>
+          ) : null}
+        </View>
+
+             <View style={estilos.bloco}> 
+          <Text style={estilos.rotulo}>Apelido</Text>
+          <TextInput
+            placeholder="Digite como quer ser chamado" 
+            value={apelido}
+            onChangeText={setApelido}
+            style={[estilos.input, erroUsuario ? estilos.inputErro : null]}
+            placeholderTextColor="#aaa" 
+          />
+          {erroUsuario ? (
             <Text style={estilos.textoErro}>{erroUsuario}</Text>
           ) : null}
         </View>
@@ -59,10 +80,10 @@ export default function TelaLogin({ navigation }) {
           <TextInput
             placeholder="Digite sua senha" 
             value={senha} 
-            onChangeText={setSenha} // Atualiza estado 
+            onChangeText={setSenha} 
             style={estilos.input} 
-            placeholderTextColor="#aaa" // Cor do placeholder
-            secureTextEntry // Oculta os caracteres digitados por ser senha
+            placeholderTextColor="#aaa" 
+            secureTextEntry 
           />
         </View>
 
