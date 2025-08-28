@@ -10,6 +10,31 @@ import {
 } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
+// Importa imagens para mapear
+import CamisetaSP from '../assets/CamisetaSPfrente.png';
+import CamisetaCorinthians from '../assets/CamisetaCorinthiansfrente.png';
+import CamisetaFlamengo from '../assets/CamisetaFlamengofrente.png';
+import CamisetaPalmeiras from '../assets/CamisetaPalmeirasfrente.png';
+import CamisetaBotafogo from '../assets/CamisetaBotafogofrente.png';
+import CamisetaChelsea from '../assets/CamisetaChelseafrente.png';
+import CamisetaRM from '../assets/CamisetaRMfrente.png';
+import CamisetaPSG from '../assets/CamisetaPSGfrente.png';
+import CamisetaMC from '../assets/CamisetaMCfrente.png';
+import CamisetaLiverpool from '../assets/CamisetaLiverpoolfrente.png';
+
+const camisetas = {
+  1: CamisetaPalmeiras,
+  2: CamisetaFlamengo,
+  3: CamisetaSP,
+  4: CamisetaCorinthians,
+  5: CamisetaBotafogo,
+  6: CamisetaChelsea,
+  7: CamisetaRM,
+  8: CamisetaLiverpool,
+  9: CamisetaPSG,
+  10: CamisetaMC,
+};
+
 export default function ListaDeDesejos({ navigation }) {
   const [lista, setLista] = useState([]);
 
@@ -33,13 +58,20 @@ export default function ListaDeDesejos({ navigation }) {
     <View style={estilos.container}>
       <Text style={estilos.titulo}>Minha Lista de Desejos </Text>
 
-      <FlatList
+       <FlatList
         data={lista}
         keyExtractor={(item) => item.id}
+        numColumns={2}
+        columnWrapperStyle={{ justifyContent: 'space-between' }}
         renderItem={({ item }) => (
           <View style={estilos.item}>
-            <Image source={item.imagem} style={estilos.imagem} />
-            <Text style={estilos.nome}>{item.nome}</Text>
+            <TouchableOpacity
+              onPress={() =>
+                navigation.navigate('Detalhes', { produto: item })
+              }>
+              <Image source={imagens[item.id]} style={estilos.imagem} />
+              <Text style={estilos.nome}>{item.nome}</Text>
+            </TouchableOpacity>
             <TouchableOpacity
               style={estilos.botaoExcluir}
               onPress={() => removerItem(item.id)}>
@@ -47,7 +79,7 @@ export default function ListaDeDesejos({ navigation }) {
             </TouchableOpacity>
           </View>
         )}
-        ListEmptyComponent={<Text>Nenhum item na sua lista </Text>}
+        ListEmptyComponent={<Text>Nenhum item na sua lista 😢</Text>}
       />
     </View>
   );
@@ -62,7 +94,7 @@ const estilos = StyleSheet.create({
     color: '#800000',
   },
   item: {
-    flexDirection: 'row',
+    flex: 1,
     alignItems: 'center',
     justifyContent: 'space-between',
     borderWidth: 1,
@@ -70,8 +102,22 @@ const estilos = StyleSheet.create({
     padding: 10,
     borderRadius: 8,
     marginBottom: 10,
+    marginHorizontal: 5,
   },
-  imagem: { width: 60, height: 60, resizeMode: 'contain' },
-  nome: { flex: 1, marginLeft: 10, fontWeight: '600' },
-  botaoExcluir: { backgroundColor: 'red', padding: 8, borderRadius: 6 },
+  imagem: {
+    width: 120,
+    height: 120,
+    resizeMode: 'contain',
+  },
+  nome: {
+    marginTop: 8,
+    fontWeight: '600',
+    textAlign: 'center',
+  },
+  botaoExcluir: {
+    backgroundColor: '#800000',
+    padding: 8,
+    borderRadius: 6,
+    marginTop: 5,
+  },
 });
