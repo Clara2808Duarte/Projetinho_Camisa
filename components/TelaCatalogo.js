@@ -19,6 +19,7 @@ import CamisetaRM from '../assets/CamisetaRMfrente.png';
 import CamisetaPSG from '../assets/CamisetaPSGfrente.png';
 import CamisetaMC from '../assets/CamisetaMCfrente.png';
 import CamisetaLiverpool from '../assets/CamisetaLiverpoolfrente.png';
+import ListaDeDesejos from './ListaDeDesejos';
 
 const camisetas = [
   { id: '1', nome: 'Palmeiras 2025', imagem: CamisetaPalmeiras },
@@ -47,6 +48,13 @@ export default function TelaCatalogo({ navigation }) {
   return (
     <View style={estilos.container}>
       <Text style={estilos.saudacao}> Bem-vindo, {apelido} 👋!</Text>
+      <TouchableOpacity
+        style={estilos.lista}
+        onPress={() => navigation.navigate('ListaDeDesejos')}>
+        <Text style={{ color: '#fff', fontWeight: 'bold' }}>
+          Lista de Desejos 😉
+        </Text>
+      </TouchableOpacity>
 
       <FlatList
         data={camisetas}
@@ -91,4 +99,8 @@ const estilos = StyleSheet.create({
     color: '#800000',
     textAlign: 'center',
   },
+  lista:{
+    backgroundColor: '#800000'
+
+  }
 });
