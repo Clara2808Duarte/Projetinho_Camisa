@@ -1,4 +1,3 @@
-// Importa hooks e componentes básicos do React Native
 import { useState, useEffect } from 'react';
 import {
   View,
@@ -12,11 +11,9 @@ import {
   KeyboardAvoidingView,
   Platform,
 } from 'react-native';
-
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-// Componente principal da tela de detalhes
-export default function TelaDetalhes({ route, navigation }) {
+export default function TelaDetalhes({ route }) {
   const [apelido, setApelido] = useState('');
 
   useEffect(() => {
@@ -27,25 +24,18 @@ export default function TelaDetalhes({ route, navigation }) {
     carregarUsuario();
   }, []);
 
-  // Recebe o produto enviado via navegação
   const { produto } = route.params;
 
-  // --- Arrays de cores e tamanhos disponíveis ---
   const coresDisponiveis = ['Branco', 'Preto', 'Azul', 'Vermelho'];
   const tamanhosDisponiveis = ['P', 'M', 'G', 'GG'];
 
-  // --- Estados do frete ---
   const [cep, setCep] = useState('');
   const [metodoEntrega, setMetodoEntrega] = useState('Econômica');
   const [erroCep, setErroCep] = useState('');
-
-  // --- Estado da quantidade ---
   const [quantidade, setQuantidade] = useState(1);
 
-  // --- Preço do produto ---
   const precoNumber = Number(produto.preco) || 139.99;
 
-  // --- Funções utilitárias ---
   const somenteDigitos = (texto) => texto.replace(/\D/g, '');
 
   const validarCep = (valor) => {
@@ -106,7 +96,6 @@ export default function TelaDetalhes({ route, navigation }) {
     );
   };
 
-  // 👉 Função para salvar produto na lista de desejos
   const salvarListaDesejos = async () => {
     try {
       if (!apelido) {
@@ -117,18 +106,25 @@ export default function TelaDetalhes({ route, navigation }) {
       const lista = await AsyncStorage.getItem('listaDesejos');
       let listaDesejos = lista ? JSON.parse(lista) : [];
 
+      // Verifica se o produto já está na lista
+      const jaAdicionado = listaDesejos.some(
+        (item) => item.produto.id === produto.id
+      );
+      if (jaAdicionado) {
+        Alert.alert('Atenção', 'Este produto já está na sua lista de desejos!');
+        return;
+      }
+
       // Adiciona novo item
-      listaDesejos.push({
-        apelido,
-        produto,
-      });
+      listaDesejos.push({ apelido, produto });
 
       await AsyncStorage.setItem('listaDesejos', JSON.stringify(listaDesejos));
 
       Alert.alert('Sucesso', 'Produto adicionado à lista de desejos!');
-      navigation.navigate('ListaDeDesejos');
+      // NÃO navega para a lista, permanece na tela de detalhes
     } catch (e) {
       console.error('Erro ao salvar na lista de desejos:', e);
+      Alert.alert('Erro', 'Não foi possível adicionar à lista.');
     }
   };
 
@@ -151,7 +147,6 @@ export default function TelaDetalhes({ route, navigation }) {
           alta qualidade, ideal para torcedores apaixonados.
         </Text>
 
-        {/* CONTROLES DE QUANTIDADE */}
         <Text style={estilos.tituloSecao}>Quantidade</Text>
         <View style={estilos.linhaQuantidade}>
           <TouchableOpacity
@@ -169,15 +164,13 @@ export default function TelaDetalhes({ route, navigation }) {
           </TouchableOpacity>
         </View>
 
-        {/* BOTÃO LISTA DE DESEJOS */}
         <TouchableOpacity
           style={estilos.botaoListaDesejos}
           onPress={salvarListaDesejos}
         >
-          <Text style={estilos.textoBotaoListaDesejos}>Lista de Desejos</Text>
+          <Text style={estilos.textoBotaoListaDesejos}>Adicionar à Lista de Desejos</Text>
         </TouchableOpacity>
 
-        {/* RESTANTE DO CÓDIGO (cores, tamanhos, frete, etc.) */}
         <Text style={estilos.tituloSecao}>Cores disponíveis</Text>
         <View style={estilos.tags}>
           {coresDisponiveis.map((cor) => (
@@ -346,11 +339,10 @@ const estilos = StyleSheet.create({
   },
   textoBotaoConfirmar: { color: '#fff', fontSize: 16, fontWeight: '700' },
 
-  // 🔹 Estilo novo para o botão de Lista de Desejos
   botaoListaDesejos: {
     marginVertical: 10,
     padding: 14,
-    backgroundColor: '#ff7f50',
+    backgroundColor: '#800000',
     borderRadius: 10,
     alignItems: 'center',
   },

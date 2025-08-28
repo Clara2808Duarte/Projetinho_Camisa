@@ -100,7 +100,16 @@ const estilos = StyleSheet.create({
     textAlign: 'center',
   },
   lista:{
-    backgroundColor: '#800000'
-
+        backgroundColor: '#800000',
+    paddingVertical: 12,
+    paddingHorizontal: 18,
+    borderRadius: 10,
+    alignItems: 'center',
+    marginBottom: 15,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5, 
   }
 });
